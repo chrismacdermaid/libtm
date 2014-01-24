@@ -44,7 +44,7 @@ using namespace MathExtra;
 /**
  * @brief returns vector 2 subtracted from vector 1
  *
- * @param clientdata scads pointer
+ * @param clientdata null
  * @param interp tcl interpreter
  * @param argc number of arguments passed == 3
  * @param objv array of arguments pased
@@ -95,7 +95,7 @@ static int tcl_vecsub(ClientData /*clientdata*/, Tcl_Interp *interp,
 /**
  * Calculates the vector sum of two vectors of aribitrary length
  *
- * @param ClientData scads pointer
+ * @param ClientData null
  * @param Tcl_Interp tcl interpreter
  * @param argc number of arguments passed
  * @param argv array of passed arguments
@@ -121,7 +121,7 @@ static int tcl_vecadd(ClientData /*clientdata*/, Tcl_Interp *interp,
 
     // Check to make sure the vectors are equal in length
     if (num1 != num2) {
-        Tcl_AppendResult(interp, "vecsub expects two vectors of equal length", "\n", NULL);
+        Tcl_AppendResult(interp, "vecadd expects two vectors of equal length", "\n", NULL);
         return TCL_ERROR;
     }
 
@@ -129,14 +129,65 @@ static int tcl_vecadd(ClientData /*clientdata*/, Tcl_Interp *interp,
     for (int i = 0; i < num1; i++) {
         double d1 = 0, d2 = 0;
         if (Tcl_GetDoubleFromObj(interp, data1[i], &d1) != TCL_OK) {
-            Tcl_SetResult(interp, (char *) "vecsub: non-numeric in first argument", TCL_STATIC );
+            Tcl_SetResult(interp, (char *) "vecadd: non-numeric in first argument", TCL_STATIC );
             return TCL_ERROR;
         }
         if (Tcl_GetDoubleFromObj(interp, data2[i], &d2) != TCL_OK) {
-            Tcl_SetResult(interp, (char *) "vecsub: non-numeric in second argument", TCL_STATIC );
+            Tcl_SetResult(interp, (char *) "vecadd: non-numeric in second argument", TCL_STATIC );
             return TCL_ERROR;
         }
         Tcl_ListObjAppendElement(interp, tcl_result, Tcl_NewDoubleObj(d1 + d2));
+    }
+    Tcl_SetObjResult(interp, tcl_result);
+    return TCL_OK;
+}
+
+/**
+ * Calculates the vector (tensor) product of two vectors of aribitrary length
+ * Term-by-term multiply
+ *
+ * @param ClientData null
+ * @param Tcl_Interp tcl interpreter
+ * @param argc number of arguments passed
+ * @param argv array of passed arguments
+ *
+ * @return TCL_OK/TCL_ERROR
+ */
+static int tcl_vecmul(ClientData /*clientdata*/, Tcl_Interp *interp,
+                      int argc, Tcl_Obj * const objv[]) {
+
+    // Check number of arguments
+    if (argc != 3) {
+        Tcl_AppendResult(interp, "vecmul expects two vectors of equal length", "\n", NULL);
+        return TCL_ERROR;
+    }
+
+    // Get the individual lists from objv[1] and objv[2]
+    int num1 = 0, num2 = 0;
+    Tcl_Obj **data1, **data2;
+    if (Tcl_ListObjGetElements(interp, objv[1], &num1, &data1) != TCL_OK)
+        return TCL_ERROR;
+    if (Tcl_ListObjGetElements(interp, objv[2], &num2, &data2) != TCL_OK)
+        return TCL_ERROR;
+
+    // Check to make sure the vectors are equal in length
+    if (num1 != num2) {
+        Tcl_AppendResult(interp, "vecmul expects two vectors of equal length", "\n", NULL);
+        return TCL_ERROR;
+    }
+
+    Tcl_Obj *tcl_result = Tcl_NewListObj(0, NULL);
+    for (int i = 0; i < num1; i++) {
+        double d1 = 0, d2 = 0;
+        if (Tcl_GetDoubleFromObj(interp, data1[i], &d1) != TCL_OK) {
+            Tcl_SetResult(interp, (char *) "vecmul: non-numeric in first argument", TCL_STATIC );
+            return TCL_ERROR;
+        }
+        if (Tcl_GetDoubleFromObj(interp, data2[i], &d2) != TCL_OK) {
+            Tcl_SetResult(interp, (char *) "vecmul: non-numeric in second argument", TCL_STATIC );
+            return TCL_ERROR;
+        }
+        Tcl_ListObjAppendElement(interp, tcl_result, Tcl_NewDoubleObj(d1 * d2));
     }
     Tcl_SetObjResult(interp, tcl_result);
     return TCL_OK;
@@ -176,7 +227,7 @@ static int tcl_vecsum(ClientData /*clientdata*/, Tcl_Interp *interp,
 /**
  * Calculates the dot product of two vectors of aribitrary length
  *
- * @param ClientData scads pointer
+ * @param ClientData null
  * @param Tcl_Interp tcl interpreter
  * @param argc number of arguments passed
  * @param argv array of passed arguments
@@ -228,7 +279,7 @@ static int tcl_vecdot(ClientData /*clientdata*/, Tcl_Interp *interp,
 /**
  * Calculates the cross product of two vectors of length 3
  *
- * @param ClientData scads pointer
+ * @param ClientData null
  * @param Tcl_Interp tcl interpreter
  * @param argc number of arguments passed
  * @param argv array of passed arguments
@@ -643,7 +694,7 @@ static int tcl_transtranspose(ClientData, Tcl_Interp *interp,
 /**
  * @brief produce 4x4 rotation matrix for rotation about axis a given magnitude
  *
- * @param ClientData scads pointer
+ * @param ClientData null
  * @param interp tcl interpreter
  * @param argc number of arguments passed
  * @param argv array of arguments passed
@@ -1113,6 +1164,14 @@ int matvec_init(Tcl_Interp *interp) {
 
     // Vecadd command
     Tcl_CreateObjCommand(interp, (char *) "vecadd", tcl_vecadd,
+                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+
+    // Vecmul command
+    Tcl_CreateObjCommand(interp, (char *) "vecmul", tcl_vecmul,
+                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+
+    // Vecsum command
+    Tcl_CreateObjCommand(interp, (char *) "vecsum", tcl_vecsum,
                          (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecdot command
