@@ -7,7 +7,7 @@ SHELL = /bin/sh
 ROOT =  tm
 EXE =	lib$(ROOT)_$@.so
 
-SRC =	 math_extra.cpp tcl_math.cpp main.cpp 
+SRC =	main.cpp math_extra.cpp tcl_math.cpp 
 
 INC =	constants.h main.h math_extra.h tcl_math.h 
 

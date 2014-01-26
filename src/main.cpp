@@ -60,8 +60,12 @@ extern "C" {
         if (Tcl_PkgProvide(interp, PACKAGE_NAME, PACKAGE_VERSION) != TCL_OK)
             return TCL_ERROR;
 
+        // Create the initializer command
         Tcl_CreateObjCommand(interp,"tm",tcl_tm,
                              (ClientData)NULL, (Tcl_CmdDeleteProc*)NULL);
+
+        // Call the initializer command so tm is loaded automatically
+        Tcl_Eval(interp,"tm");
 
         return TCL_OK;
     }

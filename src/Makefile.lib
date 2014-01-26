@@ -1,15 +1,15 @@
-# ccb static library multiple-machine Makefile
+# tclmath static library multiple-machine Makefile
 
 SHELL = /bin/sh
 
 # Definitions
 
-ROOT =	ccb
+ROOT =	tm
 EXE =	lib$(ROOT)_$@.a
 
-SRC =	atom.cpp backbone.cpp backbone_coiledcoil.cpp backbonehandler.cpp bitmask.cpp ccb.cpp ccbio.cpp domain.cpp error.cpp group.cpp  math_extra.cpp memory.cpp output.cpp output_pdb.cpp site.cpp tcl_ccb.cpp universe.cpp 
+SRC =	main.cpp math_extra.cpp tcl_math.cpp 
 
-INC =	atom.h backbone.h backbone_coiledcoil.h backbonehandler.h bitmask.h ccb.h ccbio.h ccbtype.h constants.h domain.h error.h group.h math_extra.h memory.h output.h output_pdb.h pointers.h site.h sort.h style_backbone.h style_output.h universe.h version.h 
+INC =	constants.h main.h math_extra.h tcl_math.h 
 
 OBJ =	$(SRC:.cpp=.o)
 
@@ -26,11 +26,6 @@ help:
 	@if [ ! -d Obj_$@ ]; then mkdir Obj_$@; fi
 	@cp -p $(SRC) $(INC) Obj_$@
 	@cp MAKE/Makefile.$@ Obj_$@/Makefile
-	@if [ ! -e Makefile.package ]; \
-	  then cp Makefile.package.empty Makefile.package; fi
-	@if [ ! -e Makefile.package.settings ]; \
-	  then cp Makefile.package.settings.empty Makefile.package.settings; fi
-	@cp Makefile.package Makefile.package.settings Obj_$@
 	@cd Obj_$@; \
 	$(MAKE) $(MFLAGS) "OBJ = $(OBJ)" "INC = $(INC)" "SHFLAGS =" \
           "EXE = ../$(EXE)" lib
