@@ -70,8 +70,46 @@ static int tcl_complex_conj(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-static int tcl_veclength2_complex(ClientData /*clientdata*/, Tcl_Interp *interp,
-                            int objc, Tcl_Obj * const objv[]) {
+static int tcl_complex_veclength2(ClientData /*clientdata*/, Tcl_Interp *interp,
+                                  int objc, Tcl_Obj * const objv[]) {
+
+    std::vector<std::complex<double> > v;
+
+    if ( objc != 2 ) {
+        Tcl_WrongNumArgs(interp, objc, objv, "veclength_2_complex expects a list of complex numbers");
+        return TCL_ERROR;
+    }
+    Tcl_Obj* list = objv[1];
+
+    int count = 0;
+    if ( Tcl_ListObjLength(interp, list, &count) != TCL_OK ) {
+        Tcl_AppendResult(interp, "Couldn't get complex list length");
+        return TCL_ERROR;
+    }
+
+    if (tcl_get_complex_vector(NULL, interp, list, v) != TCL_OK ) {
+        Tcl_AppendResult(interp, "Couldn't retrieve complex list, malformed list?");
+        return TCL_ERROR;
+    }
+
+    // Calculate the square magnitude of each term
+    for(std::vector<std::complex<double> >::iterator
+                it = v.begin(); it != v.end(); ++it) {
+        *it = *it * std::conj(*it);
+    }
+
+    // Construct a list of complex objects from the vector
+    list = Tcl_NewListObj(0, NULL);
+    if (tcl_put_real_list(NULL, interp, list, v) != TCL_OK ) {
+        Tcl_AppendResult(interp, "Couldn't construct real list");
+        return TCL_ERROR;
+    }
+
+    // Return the list to the user
+    Tcl_SetObjResult(interp, list);
+
+    return TCL_OK;
+}
 
 int tcl_get_complex_vector(ClientData /*clientdata*/, Tcl_Interp *interp,
                            Tcl_Obj * const list, std::vector<std::complex<double> > &v) {
@@ -120,8 +158,6 @@ int tcl_get_complex_vector(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-
-
 int tcl_put_complex_list(ClientData /*clientdata*/, Tcl_Interp *interp,
                          Tcl_Obj *list, std::vector<std::complex<double> > &v) {
 
@@ -155,10 +191,39 @@ int tcl_put_complex_list(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
+int tcl_put_real_list(ClientData /*clientdata*/, Tcl_Interp *interp,
+                      Tcl_Obj *list, std::vector<std::complex<double> > &v) {
+
+    Tcl_Obj* Re;
+
+    for(std::vector<std::complex<double> >::iterator
+                it = v.begin(); it != v.end(); ++it) {
+
+        Re = Tcl_NewDoubleObj(std::real(*it));
+
+        if ( Tcl_ListObjAppendElement(interp, list, Re) != TCL_OK ) {
+            Tcl_AppendResult(interp, "Couldn't append real result");
+            return TCL_ERROR;
+        }
+    }
+
+    Tcl_SetObjResult(interp, list);
+
+    return TCL_OK;
+}
+
+// +---------------------------------+
+// | Add tcl commands to interpreter |
+// +---------------------------------+
+
 int complex_init(Tcl_Interp *interp) {
 
     // complex_conj
     Tcl_CreateObjCommand(interp, (char *) "complex_conj", tcl_complex_conj,
+                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+
+    // Square Magnitude
+    Tcl_CreateObjCommand(interp, (char *) "complex_veclength2", tcl_complex_veclength2,
                          (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     return TCL_OK;
