@@ -41,6 +41,30 @@
 using namespace TCLMATH_NS;
 using namespace MathExtra;
 
+static int tcl_nextpow2(ClientData /*clientdata*/, Tcl_Interp *interp,
+                        int argc, Tcl_Obj * const objv[])
+{
+
+    // Check number of arguments
+    if (argc != 2) {
+        Tcl_AppendResult(interp, "nextpow2 expects a number", "\n", NULL);
+        return TCL_ERROR;
+    }
+
+    double d1 = 0.0;
+    if (Tcl_GetDoubleFromObj(interp, objv[1], &d1) != TCL_OK) {
+        Tcl_SetResult(interp, (char *) "nextpow2: non-numeric in first argument", TCL_STATIC );
+        return TCL_ERROR;
+    }
+
+    double d2 = 0.0;
+    d2 = nextpow2(d1);
+
+    Tcl_SetObjResult(interp, Tcl_NewDoubleObj(d2));
+    return TCL_OK;
+}
+
+
 /**
  * @brief returns vector 2 subtracted from vector 1
  *
@@ -52,7 +76,8 @@ using namespace MathExtra;
  * @return TCL_OK/TCL_ERROR
  */
 static int tcl_vecsub(ClientData /*clientdata*/, Tcl_Interp *interp,
-                      int argc, Tcl_Obj * const objv[]) {
+                      int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 3) {
@@ -103,7 +128,8 @@ static int tcl_vecsub(ClientData /*clientdata*/, Tcl_Interp *interp,
  * @return TCL_OK/TCL_ERROR
  */
 static int tcl_vecadd(ClientData /*clientdata*/, Tcl_Interp *interp,
-                      int argc, Tcl_Obj * const objv[]) {
+                      int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 3) {
@@ -154,7 +180,8 @@ static int tcl_vecadd(ClientData /*clientdata*/, Tcl_Interp *interp,
  * @return TCL_OK/TCL_ERROR
  */
 static int tcl_vecmul(ClientData /*clientdata*/, Tcl_Interp *interp,
-                      int argc, Tcl_Obj * const objv[]) {
+                      int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 3) {
@@ -194,7 +221,8 @@ static int tcl_vecmul(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_vecsum(ClientData /*clientdata*/, Tcl_Interp *interp,
-                      int argc, Tcl_Obj * const objv[]) {
+                      int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 2) {
@@ -236,7 +264,8 @@ static int tcl_vecsum(ClientData /*clientdata*/, Tcl_Interp *interp,
  */
 
 static int tcl_vecdot(ClientData /*clientdata*/, Tcl_Interp *interp,
-                      int argc, Tcl_Obj * const objv[]) {
+                      int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 3) {
@@ -288,7 +317,8 @@ static int tcl_vecdot(ClientData /*clientdata*/, Tcl_Interp *interp,
  */
 
 static int tcl_veccross(ClientData /*clientdata*/, Tcl_Interp *interp,
-                        int argc, Tcl_Obj * const objv[]) {
+                        int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 3) {
@@ -332,7 +362,8 @@ static int tcl_veccross(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_vecinvert(ClientData /*clientdata*/, Tcl_Interp *interp,
-                         int argc, Tcl_Obj * const objv[]) {
+                         int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 2) {
@@ -360,7 +391,8 @@ static int tcl_vecinvert(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_vecnorm(ClientData /*clientdata*/, Tcl_Interp *interp,
-                       int argc, Tcl_Obj * const objv[]) {
+                       int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 2) {
@@ -403,7 +435,8 @@ static int tcl_vecnorm(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_vecscale(ClientData /*clientdata*/, Tcl_Interp *interp,
-                        int argc, Tcl_Obj * const objv[]) {
+                        int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 3) {
@@ -436,7 +469,8 @@ static int tcl_vecscale(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_veclength(ClientData /*clientdata*/, Tcl_Interp *interp,
-                         int argc, Tcl_Obj * const objv[]) {
+                         int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 2) {
@@ -471,7 +505,8 @@ static int tcl_veclength(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_veclength2(ClientData /*clientdata*/, Tcl_Interp *interp,
-                          int argc, Tcl_Obj * const objv[]) {
+                          int argc, Tcl_Obj * const objv[])
+{
 
     // Check number of arguments
     if (argc != 2) {
@@ -546,7 +581,8 @@ static int tcl_vecdist(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-static double* obj_getdoublearray(Tcl_Interp *interp, Tcl_Obj *const objv[], int *len) {
+static double* obj_getdoublearray(Tcl_Interp *interp, Tcl_Obj *const objv[], int *len)
+{
     int num;
 
     Tcl_Obj **data;
@@ -582,7 +618,8 @@ static double* obj_getdoublearray(Tcl_Interp *interp, Tcl_Obj *const objv[], int
  **/
 
 static int obj_vecmean(ClientData, Tcl_Interp *interp,
-                       int argc, Tcl_Obj *const objv[]) {
+                       int argc, Tcl_Obj *const objv[])
+{
     if (argc != 2) {
         Tcl_WrongNumArgs(interp, 1, objv, (char *)"?vector?");
         return TCL_ERROR;
@@ -606,7 +643,8 @@ static int obj_vecmean(ClientData, Tcl_Interp *interp,
 }
 
 static int obj_vecstddev(ClientData, Tcl_Interp *interp,
-                         int argc, Tcl_Obj *const objv[]) {
+                         int argc, Tcl_Obj *const objv[])
+{
     if (argc != 2) {
         Tcl_WrongNumArgs(interp, 1, objv, (char *)"?vector?");
         return TCL_ERROR;
@@ -649,7 +687,8 @@ static int obj_vecstddev(ClientData, Tcl_Interp *interp,
  */
 
 static int tcl_transtranspose(ClientData, Tcl_Interp *interp,
-                              int argc, Tcl_Obj * const objv[]) {
+                              int argc, Tcl_Obj * const objv[])
+{
 
     /**
      * objv[0] = transtranspose
@@ -703,7 +742,8 @@ static int tcl_transtranspose(ClientData, Tcl_Interp *interp,
  */
 
 static int tcl_transaxis(ClientData, Tcl_Interp *interp,
-                         int argc, Tcl_Obj * const objv[]) {
+                         int argc, Tcl_Obj * const objv[])
+{
 
     /**
      * objv[0] = transaxis
@@ -783,7 +823,8 @@ static int tcl_transaxis(ClientData, Tcl_Interp *interp,
 }
 
 static int tcl_transabout(ClientData, Tcl_Interp *interp,
-                          int argc, Tcl_Obj * const objv[]) {
+                          int argc, Tcl_Obj * const objv[])
+{
 
     /**
      * objv[0] = transabout
@@ -855,7 +896,8 @@ static int tcl_transabout(ClientData, Tcl_Interp *interp,
 }
 
 static int tcl_transvec(ClientData /*clientdata*/, Tcl_Interp *interp,
-                        int argc, Tcl_Obj * const objv[]) {
+                        int argc, Tcl_Obj * const objv[])
+{
 
     /**
      * objv[0] = transvec
@@ -900,7 +942,8 @@ static int tcl_transvec(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_transvecinv(ClientData /*clientdata*/, Tcl_Interp *interp,
-                           int argc, Tcl_Obj * const objv[]) {
+                           int argc, Tcl_Obj * const objv[])
+{
 
     /**
      * objv[0] = transvecinv
@@ -945,7 +988,8 @@ static int tcl_transvecinv(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_matmult(ClientData /*clientdata*/, Tcl_Interp *interp,
-                       int argc, Tcl_Obj * const objv[]) {
+                       int argc, Tcl_Obj * const objv[])
+{
 
     if (argc < 3) {
         Tcl_AppendResult(interp, "matmult: expected two 4x4 matrices", "\n", NULL);
@@ -991,7 +1035,8 @@ static int tcl_matmult(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_matvec(ClientData /*clientdata*/, Tcl_Interp *interp,
-                      int argc, Tcl_Obj * const objv[]) {
+                      int argc, Tcl_Obj * const objv[])
+{
 
     if (argc < 3) {
         Tcl_AppendResult(interp, "matmult: expected a 4x4 matrix and a vector length 4\n", NULL);
@@ -1047,7 +1092,8 @@ static int tcl_matvec(ClientData /*clientdata*/, Tcl_Interp *interp,
  * @return TCL_OK/TCL_ERROR
  */
 
-int tcl_get_vector(const char *s, double *val, Tcl_Interp *interp) {
+int tcl_get_vector(const char *s, double *val, Tcl_Interp *interp)
+{
 
     int num;
     const char **pos;
@@ -1080,7 +1126,8 @@ int tcl_get_vector(const char *s, double *val, Tcl_Interp *interp) {
  *
  * @return TCL_OK/TCL_ERROR
  */
-int tcl_get_vector_obj(Tcl_Obj *s, double *val, Tcl_Interp *interp) {
+int tcl_get_vector_obj(Tcl_Obj *s, double *val, Tcl_Interp *interp)
+{
 
     int num = 0;
     Tcl_Obj **pos = NULL;
@@ -1106,7 +1153,8 @@ int tcl_get_vector_obj(Tcl_Obj *s, double *val, Tcl_Interp *interp) {
  * @return TCL_OK/TCL_ERROR
  */
 
-int tcl_get_matrix(const char *fctn, Tcl_Interp *interp, Tcl_Obj *s, double mat[4][4]) {
+int tcl_get_matrix(const char *fctn, Tcl_Interp *interp, Tcl_Obj *s, double mat[4][4])
+{
     int num_rows = 0;
     Tcl_Obj **data_rows = NULL;
     if (Tcl_ListObjGetElements(interp, s, &num_rows, &data_rows) != TCL_OK) {
@@ -1148,7 +1196,12 @@ int tcl_get_matrix(const char *fctn, Tcl_Interp *interp, Tcl_Obj *s, double mat[
     return TCL_OK;
 }
 
-int matvec_init(Tcl_Interp *interp) {
+int matvec_init(Tcl_Interp *interp)
+{
+
+    // Next power of two
+    Tcl_CreateObjCommand(interp, (char *) "nextpow2", tcl_nextpow2,
+                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Transaxis command
     Tcl_CreateObjCommand(interp, (char *) "transaxis", tcl_transaxis,

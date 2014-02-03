@@ -33,98 +33,115 @@
 
 namespace MathExtra {
 
-    // 3 vector operations
-    void norm3(double *v);
-    void normalize3(const double *v, double *ans);
-    void snormalize3(const double, const double *v, double *ans);
-    void negate3(double *v);
-    void scale3(double s, double *v);
-    void add3(const double *v1, const double *v2, double *ans);
-    void sub3(const double *v1, const double *v2, double *ans);
-    double len3(const double *v);
-    double lensq3(const double *v);
-    double dot3(const double *v1, const double *v2);
-    void cross3(const double *v1, const double *v2, double *ans);
-    void zero3(double v[3]);
-    void identity3(double ans[3][3]);
-    void rotate(double *p, double *center, double *vec, double theta); /**< Rotate point p about vector going through center by theta */
+// Helpers
+unsigned long long nextpow2(unsigned long long v);
 
-    // 3x3 matrix operations
-    double det3(const double mat[3][3]);
-    void diag_times3(const double *diagonal, const double mat[3][3], double ans[3][3]);
-    void plus3(const double m[3][3], const double m2[3][3], double ans[3][3]);
-    void times3(const double m[3][3], const double m2[3][3], double ans[3][3]);
-    void transpose3(const double m[3][3], double ans[3][3]);
-    void transpose_times3(const double mat1[3][3], const double mat2[3][3], double ans[3][3]);
-    void times3_transpose(const double mat1[3][3], const double mat2[3][3], double ans[3][3]);
-    void invert3(const double mat[3][3], double ans[3][3]);
-    void matvec(const double mat[3][3], const double*vec, double *ans);
-    void matvec(const double *ex, const double *ey, const double *ez, const double *vec, double *ans);
-    void transpose_matvec(const double mat[3][3], const double*vec, double *ans);
-    void transpose_matvec(const double *ex, const double *ey, const double *ez, const double *v, double *ans);
-    void transpose_diag3(const double mat[3][3], const double*vec, double ans[3][3]);
-    void vecmat(const double *v, const double m[3][3], double *ans);
-    void scalar_times3(const double f, double m[3][3]);
-    void zero3(double m[3][3]);
+// 3 vector operations
+void norm3(double *v);
+void normalize3(const double *v, double *ans);
+void snormalize3(const double, const double *v, double *ans);
+void negate3(double *v);
+void scale3(double s, double *v);
+void add3(const double *v1, const double *v2, double *ans);
+void sub3(const double *v1, const double *v2, double *ans);
+double len3(const double *v);
+double lensq3(const double *v);
+double dot3(const double *v1, const double *v2);
+void cross3(const double *v1, const double *v2, double *ans);
+void zero3(double v[3]);
+void identity3(double ans[3][3]);
+void rotate(double *p, double *center, double *vec, double theta); /**< Rotate point p about vector going through center by theta */
 
-    void write3(const double mat[3][3]);
-    void write3(const double v[3]);
+// 3x3 matrix operations
+double det3(const double mat[3][3]);
+void diag_times3(const double *diagonal, const double mat[3][3], double ans[3][3]);
+void plus3(const double m[3][3], const double m2[3][3], double ans[3][3]);
+void times3(const double m[3][3], const double m2[3][3], double ans[3][3]);
+void transpose3(const double m[3][3], double ans[3][3]);
+void transpose_times3(const double mat1[3][3], const double mat2[3][3], double ans[3][3]);
+void times3_transpose(const double mat1[3][3], const double mat2[3][3], double ans[3][3]);
+void invert3(const double mat[3][3], double ans[3][3]);
+void matvec(const double mat[3][3], const double*vec, double *ans);
+void matvec(const double *ex, const double *ey, const double *ez, const double *vec, double *ans);
+void transpose_matvec(const double mat[3][3], const double*vec, double *ans);
+void transpose_matvec(const double *ex, const double *ey, const double *ez, const double *v, double *ans);
+void transpose_diag3(const double mat[3][3], const double*vec, double ans[3][3]);
+void vecmat(const double *v, const double m[3][3], double *ans);
+void scalar_times3(const double f, double m[3][3]);
+void zero3(double m[3][3]);
 
-    int mldivide3(const double mat[3][3], const double *vec, double *ans);
-    int jacobi(double matrix[3][3], double *evalues, double evectors[3][3]);
-    void rotate(double matrix[3][3], int i, int j, int k, int l, double s, double tau);
-    void richardson(double *q, double *m, double *w, double *moments, double dtq);
+void write3(const double mat[3][3]);
+void write3(const double v[3]);
 
-    // shape matrix operations
-    // upper-triangular 3x3 matrix stored in Voigt notation as 6-vector
+int mldivide3(const double mat[3][3], const double *vec, double *ans);
+int jacobi(double matrix[3][3], double *evalues, double evectors[3][3]);
+void rotate(double matrix[3][3], int i, int j, int k, int l, double s, double tau);
+void richardson(double *q, double *m, double *w, double *moments, double dtq);
 
-    void multiply_shape_shape(const double *one, const double *two, double *ans);
+// shape matrix operations
+// upper-triangular 3x3 matrix stored in Voigt notation as 6-vector
 
-    // quaternion operations
-    void qnormalize(double *q);
-    void qconjugate(double *q, double *qc);
-    void vecquat(double *a, double *b, double *c);
-    void quatvec(double *a, double *b, double *c);
-    void quatquat(double *a, double *b, double *c);
-    void invquatvec(double *a, double *b, double *c);
-    void axisangle_to_quat(const double *v, const double angle, double *quat);
+void multiply_shape_shape(const double *one, const double *two, double *ans);
 
-    void angmom_to_omega(double *m, double *ex, double *ey, double *ez, double *idiag, double *w);
-    void omega_to_angmom(double *w, double *ex, double *ey, double *ez, double *idiag, double *m);
-    void mq_to_omega(double *m, double *q, double *moments, double *w);
-    void exyz_to_q(double *ex, double *ey, double *ez, double *q);
-    void q_to_exyz(double *q, double *ex, double *ey, double *ez);
-    void quat_to_mat(const double *quat, double mat[3][3]);
-    void quat_to_mat_trans(const double *quat, double mat[3][3]);
+// quaternion operations
+void qnormalize(double *q);
+void qconjugate(double *q, double *qc);
+void vecquat(double *a, double *b, double *c);
+void quatvec(double *a, double *b, double *c);
+void quatquat(double *a, double *b, double *c);
+void invquatvec(double *a, double *b, double *c);
+void axisangle_to_quat(const double *v, const double angle, double *quat);
 
-    // rotation operations
-    void rotation_generator_x(const double m[3][3], double ans[3][3]);
-    void rotation_generator_y(const double m[3][3], double ans[3][3]);
-    void rotation_generator_z(const double m[3][3], double ans[3][3]);
+void angmom_to_omega(double *m, double *ex, double *ey, double *ez, double *idiag, double *w);
+void omega_to_angmom(double *w, double *ex, double *ey, double *ez, double *idiag, double *m);
+void mq_to_omega(double *m, double *q, double *moments, double *w);
+void exyz_to_q(double *ex, double *ey, double *ez, double *q);
+void q_to_exyz(double *q, double *ex, double *ey, double *ez);
+void quat_to_mat(const double *quat, double mat[3][3]);
+void quat_to_mat_trans(const double *quat, double mat[3][3]);
 
-    // 4x4 matrix and quaternion operations
-    void axis_angle_to_mat_trans4(const double theta, const double *u, const double *v, double ans[4][4]);
-    void axis_angle_to_mat_quat4(const double theta, const double *u, double ans[4][4]);
-    void times4(const double m[4][4], const double m2[4][4], double ans[4][4]);
-    void transpose4(const double m[4][4], double ans[4][4]);
-    void matvec4(const double m[4][4], const double *v, double *ans);
-    void moveby(const double *v, double ans[4][4]);
-    void moveto(const double *v, double ans[4][4]);
-    void identity4(double ans[4][4]);
-    void copy4(double ans[4][4], const double m[4][4]);
-    void zero4(double v[4]);
-    void zero4(double m[4][4]);
-    void write4(const double mat[4][4]);
+// rotation operations
+void rotation_generator_x(const double m[3][3], double ans[3][3]);
+void rotation_generator_y(const double m[3][3], double ans[3][3]);
+void rotation_generator_z(const double m[3][3], double ans[3][3]);
 
-    void axistovec(const char *axis, const double v[3], double m[4][4]);
-    void vectoaxis(const char *axis, const double v[3], double m[4][4]);
+// 4x4 matrix and quaternion operations
+void axis_angle_to_mat_trans4(const double theta, const double *u, const double *v, double ans[4][4]);
+void axis_angle_to_mat_quat4(const double theta, const double *u, double ans[4][4]);
+void times4(const double m[4][4], const double m2[4][4], double ans[4][4]);
+void transpose4(const double m[4][4], double ans[4][4]);
+void matvec4(const double m[4][4], const double *v, double *ans);
+void moveby(const double *v, double ans[4][4]);
+void moveto(const double *v, double ans[4][4]);
+void identity4(double ans[4][4]);
+void copy4(double ans[4][4], const double m[4][4]);
+void zero4(double v[4]);
+void zero4(double m[4][4]);
+void write4(const double mat[4][4]);
+
+void axistovec(const char *axis, const double v[3], double m[4][4]);
+void vectoaxis(const char *axis, const double v[3], double m[4][4]);
+}
+
+inline unsigned long long MathExtra::nextpow2(unsigned long long v)
+{
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v |= v >> 32;
+    v++;
+    return v;
 }
 
 /* ----------------------------------------------------------------------
    normalize a vector in place
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::norm3(double *v) {
+inline void MathExtra::norm3(double *v)
+{
     double scale = 1.0 / sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     v[0] *= scale;
     v[1] *= scale;
@@ -135,7 +152,8 @@ inline void MathExtra::norm3(double *v) {
    normalize a vector, return in ans
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::normalize3(const double *v, double *ans) {
+inline void MathExtra::normalize3(const double *v, double *ans)
+{
     double scale = 1.0 / sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     ans[0] = v[0] * scale;
     ans[1] = v[1] * scale;
@@ -146,7 +164,8 @@ inline void MathExtra::normalize3(const double *v, double *ans) {
    scale a vector to length
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::snormalize3(const double length, const double *v, double *ans) {
+inline void MathExtra::snormalize3(const double length, const double *v, double *ans)
+{
     double scale = length / sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     ans[0] = v[0] * scale;
     ans[1] = v[1] * scale;
@@ -157,7 +176,8 @@ inline void MathExtra::snormalize3(const double length, const double *v, double 
    negate vector v
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::negate3(double *v) {
+inline void MathExtra::negate3(double *v)
+{
     v[0] = -v[0];
     v[1] = -v[1];
     v[2] = -v[2];
@@ -167,7 +187,8 @@ inline void MathExtra::negate3(double *v) {
    scale vector v by s
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::scale3(double s, double *v) {
+inline void MathExtra::scale3(double s, double *v)
+{
     v[0] *= s;
     v[1] *= s;
     v[2] *= s;
@@ -177,7 +198,8 @@ inline void MathExtra::scale3(double s, double *v) {
    ans = v1 + v2
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::add3(const double *v1, const double *v2, double *ans) {
+inline void MathExtra::add3(const double *v1, const double *v2, double *ans)
+{
     ans[0] = v1[0] + v2[0];
     ans[1] = v1[1] + v2[1];
     ans[2] = v1[2] + v2[2];
@@ -187,7 +209,8 @@ inline void MathExtra::add3(const double *v1, const double *v2, double *ans) {
    ans = v1 - v2
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::sub3(const double *v1, const double *v2, double *ans) {
+inline void MathExtra::sub3(const double *v1, const double *v2, double *ans)
+{
     ans[0] = v1[0] - v2[0];
     ans[1] = v1[1] - v2[1];
     ans[2] = v1[2] - v2[2];
@@ -197,7 +220,8 @@ inline void MathExtra::sub3(const double *v1, const double *v2, double *ans) {
    length of vector v
    ------------------------------------------------------------------------- */
 
-inline double MathExtra::len3(const double *v) {
+inline double MathExtra::len3(const double *v)
+{
     return sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
 
@@ -205,7 +229,8 @@ inline double MathExtra::len3(const double *v) {
    squared length of vector v, or dot product of v with itself
    ------------------------------------------------------------------------- */
 
-inline double MathExtra::lensq3(const double *v) {
+inline double MathExtra::lensq3(const double *v)
+{
     return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
 
@@ -213,7 +238,8 @@ inline double MathExtra::lensq3(const double *v) {
    dot product of 2 vectors
    ------------------------------------------------------------------------- */
 
-inline double MathExtra::dot3(const double *v1, const double *v2) {
+inline double MathExtra::dot3(const double *v1, const double *v2)
+{
     return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 }
 
@@ -221,7 +247,8 @@ inline double MathExtra::dot3(const double *v1, const double *v2) {
    cross product of 2 vectors
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::cross3(const double *v1, const double *v2, double *ans) {
+inline void MathExtra::cross3(const double *v1, const double *v2, double *ans)
+{
     ans[0] = v1[1] * v2[2] - v1[2] * v2[1];
     ans[1] = v1[2] * v2[0] - v1[0] * v2[2];
     ans[2] = v1[0] * v2[1] - v1[1] * v2[0];
@@ -231,7 +258,8 @@ inline void MathExtra::cross3(const double *v1, const double *v2, double *ans) {
 /* | Zero a 3 vector |  */
 /* +-----------------+  */
 
-inline void MathExtra::zero3(double v[3]) {
+inline void MathExtra::zero3(double v[3])
+{
     v[0] = 0.0;
     v[1] = 0.0;
     v[2] = 0.0;
@@ -241,7 +269,8 @@ inline void MathExtra::zero3(double v[3]) {
 /* | Zero a 3x3 array |  */
 /* +------------------+  */
 
-inline void MathExtra::zero3(double m[3][3]) {
+inline void MathExtra::zero3(double m[3][3])
+{
     m[0][0] = 0.0; m[0][1] = 0.0; m[0][2] = 0.0;
     m[1][0] = 0.0; m[1][1] = 0.0; m[1][2] = 0.0;
     m[2][0] = 0.0; m[2][1] = 0.0; m[2][2] = 0.0;
@@ -250,7 +279,8 @@ inline void MathExtra::zero3(double m[3][3]) {
 /* ----------------------------------------------------------------------
    Return a 3x3 identity matrix
    ------------------------------------------------------------------------- */
-inline void MathExtra::identity3(double ans[3][3]) {
+inline void MathExtra::identity3(double ans[3][3])
+{
     ans[0][0] = 1;    ans[0][1] = 0;    ans[0][2] = 0;
     ans[1][0] = 0;     ans[1][1] = 1;    ans[1][2] = 0;
     ans[2][0] = 0;     ans[2][1] = 0;    ans[2][2] = 1;
@@ -266,7 +296,8 @@ inline void MathExtra::identity3(double ans[3][3]) {
  * @param   vector about which to rotate
  * @param   amount in degrees by which to rotate
  */
-inline void MathExtra::rotate(double *p, double *center, double *vector, double theta) {
+inline void MathExtra::rotate(double *p, double *center, double *vector, double theta)
+{
 
     double vec[3];
     MathExtra::normalize3(vector, vec);
@@ -284,20 +315,21 @@ inline void MathExtra::rotate(double *p, double *center, double *vector, double 
     double cost = cos(theta * DEG2RAD);
 
     p[0] = (center[0] * (vv + ww) - vec[0] * (bv + cw - uxvywz)) * (1 - cost) + x * cost
-        + (-(center[2] * vec[1]) + (center[1] * vec[2]) - vec[2] * y + vec[1] * z) * sint;
+           + (-(center[2] * vec[1]) + (center[1] * vec[2]) - vec[2] * y + vec[1] * z) * sint;
     p[1] = (center[1] * (uu + ww) - vec[1] * (au + cw - uxvywz)) * (1 - cost) + y * cost
-        + ((center[2] * vec[0]) - (center[0] * vec[2]) + vec[2] * x - vec[0] * z) * sint;
+           + ((center[2] * vec[0]) - (center[0] * vec[2]) + vec[2] * x - vec[0] * z) * sint;
     p[2] = (center[2] * (uu + vv) - vec[2] * (au + bv - uxvywz)) * (1 - cost) + z * cost
-        + (-(center[1] * vec[0]) + (center[0] * vec[1]) - vec[1] * x + vec[0] * y) * sint;
+           + (-(center[1] * vec[0]) + (center[0] * vec[1]) - vec[1] * x + vec[0] * y) * sint;
 }
 
 /* ----------------------------------------------------------------------
    determinant of a matrix
    ------------------------------------------------------------------------- */
 
-inline double MathExtra::det3(const double m[3][3]) {
+inline double MathExtra::det3(const double m[3][3])
+{
     double ans = m[0][0] * m[1][1] * m[2][2] - m[0][0] * m[1][2] * m[2][1] - m[1][0] * m[0][1] * m[2][2]
-        + m[1][0] * m[0][2] * m[2][1] + m[2][0] * m[0][1] * m[1][2] - m[2][0] * m[0][2] * m[1][1];
+                 + m[1][0] * m[0][2] * m[2][1] + m[2][0] * m[0][1] * m[1][2] - m[2][0] * m[0][2] * m[1][1];
     return ans;
 }
 
@@ -305,7 +337,8 @@ inline double MathExtra::det3(const double m[3][3]) {
    diagonal matrix times a full matrix
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::diag_times3(const double *d, const double m[3][3], double ans[3][3]) {
+inline void MathExtra::diag_times3(const double *d, const double m[3][3], double ans[3][3])
+{
     ans[0][0] = d[0] * m[0][0];
     ans[0][1] = d[0] * m[0][1];
     ans[0][2] = d[0] * m[0][2];
@@ -321,7 +354,8 @@ inline void MathExtra::diag_times3(const double *d, const double m[3][3], double
    add two matrices
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::plus3(const double m[3][3], const double m2[3][3], double ans[3][3]) {
+inline void MathExtra::plus3(const double m[3][3], const double m2[3][3], double ans[3][3])
+{
     ans[0][0] = m[0][0] + m2[0][0];
     ans[0][1] = m[0][1] + m2[0][1];
     ans[0][2] = m[0][2] + m2[0][2];
@@ -337,7 +371,8 @@ inline void MathExtra::plus3(const double m[3][3], const double m2[3][3], double
    multiply mat1 times mat2
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::times3(const double m[3][3], const double m2[3][3], double ans[3][3]) {
+inline void MathExtra::times3(const double m[3][3], const double m2[3][3], double ans[3][3])
+{
     ans[0][0] = m[0][0] * m2[0][0] + m[0][1] * m2[1][0] + m[0][2] * m2[2][0];
     ans[0][1] = m[0][0] * m2[0][1] + m[0][1] * m2[1][1] + m[0][2] * m2[2][1];
     ans[0][2] = m[0][0] * m2[0][2] + m[0][1] * m2[1][2] + m[0][2] * m2[2][2];
@@ -352,7 +387,8 @@ inline void MathExtra::times3(const double m[3][3], const double m2[3][3], doubl
 /* ----------------------------------------------------------------------
    Take the transpose of the 3x3 matrix
    ------------------------------------------------------------------------- */
-inline void MathExtra::transpose3(const double m[3][3], double ans[3][3]) {
+inline void MathExtra::transpose3(const double m[3][3], double ans[3][3])
+{
     ans[0][0] = m[0][0]; ans[0][1] = m[1][0]; ans[0][2] = m[2][0];
     ans[1][0] = m[0][1]; ans[1][1] = m[1][1]; ans[1][2] = m[2][1];
     ans[2][0] = m[0][2]; ans[2][1] = m[1][2]; ans[2][2] = m[2][2];
@@ -362,7 +398,8 @@ inline void MathExtra::transpose3(const double m[3][3], double ans[3][3]) {
    multiply the transpose of mat1 times mat2
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::transpose_times3(const double m[3][3], const double m2[3][3], double ans[3][3]) {
+inline void MathExtra::transpose_times3(const double m[3][3], const double m2[3][3], double ans[3][3])
+{
     ans[0][0] = m[0][0] * m2[0][0] + m[1][0] * m2[1][0] + m[2][0] * m2[2][0];
     ans[0][1] = m[0][0] * m2[0][1] + m[1][0] * m2[1][1] + m[2][0] * m2[2][1];
     ans[0][2] = m[0][0] * m2[0][2] + m[1][0] * m2[1][2] + m[2][0] * m2[2][2];
@@ -378,7 +415,8 @@ inline void MathExtra::transpose_times3(const double m[3][3], const double m2[3]
    multiply mat1 times transpose of mat2
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::times3_transpose(const double m[3][3], const double m2[3][3], double ans[3][3]) {
+inline void MathExtra::times3_transpose(const double m[3][3], const double m2[3][3], double ans[3][3])
+{
     ans[0][0] = m[0][0] * m2[0][0] + m[0][1] * m2[0][1] + m[0][2] * m2[0][2];
     ans[0][1] = m[0][0] * m2[1][0] + m[0][1] * m2[1][1] + m[0][2] * m2[1][2];
     ans[0][2] = m[0][0] * m2[2][0] + m[0][1] * m2[2][1] + m[0][2] * m2[2][2];
@@ -395,7 +433,8 @@ inline void MathExtra::times3_transpose(const double m[3][3], const double m2[3]
    does NOT check for singular or badly scaled matrix
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::invert3(const double m[3][3], double ans[3][3]) {
+inline void MathExtra::invert3(const double m[3][3], double ans[3][3])
+{
     double den = m[0][0] * m[1][1] * m[2][2] - m[0][0] * m[1][2] * m[2][1];
     den += -m[1][0] * m[0][1] * m[2][2] + m[1][0] * m[0][2] * m[2][1];
     den += m[2][0] * m[0][1] * m[1][2] - m[2][0] * m[0][2] * m[1][1];
@@ -415,7 +454,8 @@ inline void MathExtra::invert3(const double m[3][3], double ans[3][3]) {
    matrix times vector
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::matvec(const double m[3][3], const double *v, double *ans) {
+inline void MathExtra::matvec(const double m[3][3], const double *v, double *ans)
+{
     ans[0] = m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2];
     ans[1] = m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2];
     ans[2] = m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2];
@@ -425,7 +465,8 @@ inline void MathExtra::matvec(const double m[3][3], const double *v, double *ans
    matrix times vector
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::matvec(const double *ex, const double *ey, const double *ez, const double *v, double *ans) {
+inline void MathExtra::matvec(const double *ex, const double *ey, const double *ez, const double *v, double *ans)
+{
     ans[0] = ex[0] * v[0] + ey[0] * v[1] + ez[0] * v[2];
     ans[1] = ex[1] * v[0] + ey[1] * v[1] + ez[1] * v[2];
     ans[2] = ex[2] * v[0] + ey[2] * v[1] + ez[2] * v[2];
@@ -435,7 +476,8 @@ inline void MathExtra::matvec(const double *ex, const double *ey, const double *
    transposed matrix times vector
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::transpose_matvec(const double m[3][3], const double *v, double *ans) {
+inline void MathExtra::transpose_matvec(const double m[3][3], const double *v, double *ans)
+{
     ans[0] = m[0][0] * v[0] + m[1][0] * v[1] + m[2][0] * v[2];
     ans[1] = m[0][1] * v[0] + m[1][1] * v[1] + m[2][1] * v[2];
     ans[2] = m[0][2] * v[0] + m[1][2] * v[1] + m[2][2] * v[2];
@@ -445,7 +487,8 @@ inline void MathExtra::transpose_matvec(const double m[3][3], const double *v, d
    transposed matrix times vector
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::transpose_matvec(const double *ex, const double *ey, const double *ez, const double *v, double *ans) {
+inline void MathExtra::transpose_matvec(const double *ex, const double *ey, const double *ez, const double *v, double *ans)
+{
     ans[0] = ex[0] * v[0] + ex[1] * v[1] + ex[2] * v[2];
     ans[1] = ey[0] * v[0] + ey[1] * v[1] + ey[2] * v[2];
     ans[2] = ez[0] * v[0] + ez[1] * v[1] + ez[2] * v[2];
@@ -455,7 +498,8 @@ inline void MathExtra::transpose_matvec(const double *ex, const double *ey, cons
    transposed matrix times diagonal matrix
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::transpose_diag3(const double m[3][3], const double *d, double ans[3][3]) {
+inline void MathExtra::transpose_diag3(const double m[3][3], const double *d, double ans[3][3])
+{
     ans[0][0] = m[0][0] * d[0];
     ans[0][1] = m[1][0] * d[1];
     ans[0][2] = m[2][0] * d[2];
@@ -471,7 +515,8 @@ inline void MathExtra::transpose_diag3(const double m[3][3], const double *d, do
    row vector times matrix
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::vecmat(const double *v, const double m[3][3], double *ans) {
+inline void MathExtra::vecmat(const double *v, const double m[3][3], double *ans)
+{
     ans[0] = v[0] * m[0][0] + v[1] * m[1][0] + v[2] * m[2][0];
     ans[1] = v[0] * m[0][1] + v[1] * m[1][1] + v[2] * m[2][1];
     ans[2] = v[0] * m[0][2] + v[1] * m[1][2] + v[2] * m[2][2];
@@ -481,7 +526,8 @@ inline void MathExtra::vecmat(const double *v, const double m[3][3], double *ans
    matrix times scalar, in place
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::scalar_times3(const double f, double m[3][3]) {
+inline void MathExtra::scalar_times3(const double f, double m[3][3])
+{
     m[0][0] *= f;
     m[0][1] *= f;
     m[0][2] *= f;
@@ -498,7 +544,8 @@ inline void MathExtra::scalar_times3(const double f, double m[3][3]) {
    upper-triangular 3x3, stored as 6-vector in Voigt notation
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::multiply_shape_shape(const double *one, const double *two, double *ans) {
+inline void MathExtra::multiply_shape_shape(const double *one, const double *two, double *ans)
+{
     ans[0] = one[0] * two[0];
     ans[1] = one[1] * two[1];
     ans[2] = one[2] * two[2];
@@ -511,7 +558,8 @@ inline void MathExtra::multiply_shape_shape(const double *one, const double *two
    normalize a quaternion
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::qnormalize(double *q) {
+inline void MathExtra::qnormalize(double *q)
+{
     double norm = 1.0 / sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
     q[0] *= norm;
     q[1] *= norm;
@@ -524,7 +572,8 @@ inline void MathExtra::qnormalize(double *q) {
    assume q is of unit length
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::qconjugate(double *q, double *qc) {
+inline void MathExtra::qconjugate(double *q, double *qc)
+{
     qc[0] = q[0];
     qc[1] = -q[1];
     qc[2] = -q[2];
@@ -535,7 +584,8 @@ inline void MathExtra::qconjugate(double *q, double *qc) {
    vector-quaternion multiply: c = a*b, where a = (0,a)
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::vecquat(double *a, double *b, double *c) {
+inline void MathExtra::vecquat(double *a, double *b, double *c)
+{
     c[0] = -a[0] * b[1] - a[1] * b[2] - a[2] * b[3];
     c[1] = b[0] * a[0] + a[1] * b[3] - a[2] * b[2];
     c[2] = b[0] * a[1] + a[2] * b[1] - a[0] * b[3];
@@ -546,7 +596,8 @@ inline void MathExtra::vecquat(double *a, double *b, double *c) {
    quaternion-vector multiply: c = a*b, where b = (0,b)
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::quatvec(double *a, double *b, double *c) {
+inline void MathExtra::quatvec(double *a, double *b, double *c)
+{
     c[0] = -a[1] * b[0] - a[2] * b[1] - a[3] * b[2];
     c[1] = a[0] * b[0] + a[2] * b[2] - a[3] * b[1];
     c[2] = a[0] * b[1] + a[3] * b[0] - a[1] * b[2];
@@ -557,7 +608,8 @@ inline void MathExtra::quatvec(double *a, double *b, double *c) {
    quaternion-quaternion multiply: c = a*b
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::quatquat(double *a, double *b, double *c) {
+inline void MathExtra::quatquat(double *a, double *b, double *c)
+{
     c[0] = a[0] * b[0] - a[1] * b[1] - a[2] * b[2] - a[3] * b[3];
     c[1] = a[0] * b[1] + b[0] * a[1] + a[2] * b[3] - a[3] * b[2];
     c[2] = a[0] * b[2] + b[0] * a[2] + a[3] * b[1] - a[1] * b[3];
@@ -571,7 +623,8 @@ inline void MathExtra::quatquat(double *a, double *b, double *c) {
    c is a three component vector
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::invquatvec(double *a, double *b, double *c) {
+inline void MathExtra::invquatvec(double *a, double *b, double *c)
+{
     c[0] = -a[1] * b[0] + a[0] * b[1] + a[3] * b[2] - a[2] * b[3];
     c[1] = -a[2] * b[0] - a[3] * b[1] + a[0] * b[2] + a[1] * b[3];
     c[2] = -a[3] * b[0] + a[2] * b[1] - a[1] * b[2] + a[0] * b[3];
@@ -582,7 +635,8 @@ inline void MathExtra::invquatvec(double *a, double *b, double *c) {
    v MUST be a unit vector
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::axisangle_to_quat(const double *v, const double angle, double *quat) {
+inline void MathExtra::axisangle_to_quat(const double *v, const double angle, double *quat)
+{
     double halfa = 0.5 * angle;
     double sina = sin(halfa);
     quat[0] = cos(halfa);
@@ -595,7 +649,8 @@ inline void MathExtra::axisangle_to_quat(const double *v, const double angle, do
    Apply principal rotation generator about x to rotation matrix m
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::rotation_generator_x(const double m[3][3], double ans[3][3]) {
+inline void MathExtra::rotation_generator_x(const double m[3][3], double ans[3][3])
+{
     ans[0][0] = 0;
     ans[0][1] = -m[0][2];
     ans[0][2] = m[0][1];
@@ -611,7 +666,8 @@ inline void MathExtra::rotation_generator_x(const double m[3][3], double ans[3][
    Apply principal rotation generator about y to rotation matrix m
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::rotation_generator_y(const double m[3][3], double ans[3][3]) {
+inline void MathExtra::rotation_generator_y(const double m[3][3], double ans[3][3])
+{
     ans[0][0] = m[0][2];
     ans[0][1] = 0;
     ans[0][2] = -m[0][0];
@@ -627,7 +683,8 @@ inline void MathExtra::rotation_generator_y(const double m[3][3], double ans[3][
    Apply principal rotation generator about z to rotation matrix m
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::rotation_generator_z(const double m[3][3], double ans[3][3]) {
+inline void MathExtra::rotation_generator_z(const double m[3][3], double ans[3][3])
+{
     ans[0][0] = -m[0][1];
     ans[0][1] = m[0][0];
     ans[0][2] = 0;
@@ -648,7 +705,8 @@ inline void MathExtra::rotation_generator_z(const double m[3][3], double ans[3][
    u a magnitude theta and translated by vector v
    ------------------------------------------------------------------------- */
 
-inline void MathExtra::axis_angle_to_mat_trans4(const double theta, const double *u, const double *v, double ans[4][4]) {
+inline void MathExtra::axis_angle_to_mat_trans4(const double theta, const double *u, const double *v, double ans[4][4])
+{
 
 
     double thetaover2 = theta / 2.0;
@@ -683,7 +741,8 @@ inline void MathExtra::axis_angle_to_mat_trans4(const double theta, const double
    Generate a 4x4 quaternion matrix corresponding to a rotation about vector
    u a magnitude theta;
    ------------------------------------------------------------------------- */
-inline void MathExtra::axis_angle_to_mat_quat4(const double theta, const double *u, double ans[4][4]) {
+inline void MathExtra::axis_angle_to_mat_quat4(const double theta, const double *u, double ans[4][4])
+{
 
     double thetaover2 = theta / 2.0;
     double sin_theta_2 = sin(thetaover2);
@@ -703,7 +762,8 @@ inline void MathExtra::axis_angle_to_mat_quat4(const double theta, const double 
 /* ----------------------------------------------------------------------
    Multiply two 4x4 matrices together, return in ans
    ------------------------------------------------------------------------- */
-inline void MathExtra::times4(const double m[4][4], const double m2[4][4], double ans[4][4]) {
+inline void MathExtra::times4(const double m[4][4], const double m2[4][4], double ans[4][4])
+{
 
     ans[0][0] = m[0][0] * m2[0][0] + m[0][1] * m2[1][0] + m[0][2] * m2[2][0] + m[0][3] * m2[3][0];
     ans[0][1] = m[0][0] * m2[0][1] + m[0][1] * m2[1][1] + m[0][2] * m2[2][1] + m[0][3] * m2[3][1];
@@ -727,7 +787,8 @@ inline void MathExtra::times4(const double m[4][4], const double m2[4][4], doubl
 /* ----------------------------------------------------------------------
    Take the transpose of the 4x4 matrix
    ------------------------------------------------------------------------- */
-inline void MathExtra::transpose4(const double m[4][4], double ans[4][4]) {
+inline void MathExtra::transpose4(const double m[4][4], double ans[4][4])
+{
     ans[0][0] = m[0][0]; ans[0][1] = m[1][0]; ans[0][2] = m[2][0]; ans[0][3] = m[3][0];
     ans[1][0] = m[0][1]; ans[1][1] = m[1][1]; ans[1][2] = m[2][1]; ans[1][3] = m[3][1];
     ans[2][0] = m[0][2]; ans[2][1] = m[1][2]; ans[2][2] = m[2][2]; ans[2][3] = m[3][2];
@@ -737,7 +798,8 @@ inline void MathExtra::transpose4(const double m[4][4], double ans[4][4]) {
 /* ----------------------------------------------------------------------
    Multiply a 4x4 matrix against a 4x1 vector
    ------------------------------------------------------------------------- */
-inline void MathExtra::matvec4(const double m[4][4], const double *v, double *ans) {
+inline void MathExtra::matvec4(const double m[4][4], const double *v, double *ans)
+{
     ans[0] = m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2] + m[0][3] * v[3];
     ans[1] = m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2] + m[1][3] * v[3];
     ans[2] = m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2] + m[2][3] * v[3];
@@ -748,7 +810,8 @@ inline void MathExtra::matvec4(const double m[4][4], const double *v, double *an
    Return a 4x4 matrix necessary to translate the coordinates by a specified
    vector v
    ------------------------------------------------------------------------- */
-inline void MathExtra::moveby(const double *v, double ans[4][4]) {
+inline void MathExtra::moveby(const double *v, double ans[4][4])
+{
 
     ans[0][0] = 1;    ans[0][1] = 0;    ans[0][2] = 0;    ans[0][3] = v[0];
     ans[1][0] = 0;    ans[1][1] = 1;    ans[1][2] = 0;    ans[1][3] = v[1];
@@ -761,7 +824,8 @@ inline void MathExtra::moveby(const double *v, double ans[4][4]) {
    Return a 4x4 matrix necessary to translate the coordinates in the
    opposite direction specified by vector v
    ------------------------------------------------------------------------- */
-inline void MathExtra::moveto(const double *v, double ans[4][4]) {
+inline void MathExtra::moveto(const double *v, double ans[4][4])
+{
 
     ans[0][0] = 1;    ans[0][1] = 0;    ans[0][2] = 0;    ans[0][3] = -v[0];
     ans[1][0] = 0;    ans[1][1] = 1;    ans[1][2] = 0;    ans[1][3] = -v[1];
@@ -773,7 +837,8 @@ inline void MathExtra::moveto(const double *v, double ans[4][4]) {
 /* ----------------------------------------------------------------------
    Return a 4x4 identity matrix
    ------------------------------------------------------------------------- */
-inline void MathExtra::identity4(double ans[4][4]) {
+inline void MathExtra::identity4(double ans[4][4])
+{
 
     ans[0][0] = 1;    ans[0][1] = 0;    ans[0][2] = 0;    ans[0][3] = 0;
     ans[1][0] = 0;    ans[1][1] = 1;    ans[1][2] = 0;    ans[1][3] = 0;
@@ -784,7 +849,8 @@ inline void MathExtra::identity4(double ans[4][4]) {
 /* ----------------------------------------------------------------------
    copy the 4x4 matrix m to ans
    ------------------------------------------------------------------------- */
-inline void MathExtra::copy4(double ans[4][4], const double m[4][4]) {
+inline void MathExtra::copy4(double ans[4][4], const double m[4][4])
+{
 
     ans[0][0] = m[0][0];    ans[0][1] = m[0][1];
     ans[1][0] = m[1][0];    ans[1][1] = m[1][1];
@@ -802,7 +868,8 @@ inline void MathExtra::copy4(double ans[4][4], const double m[4][4]) {
 /* | Zero a 4 vector |  */
 /* +-----------------+  */
 
-inline void MathExtra::zero4(double v[4]) {
+inline void MathExtra::zero4(double v[4])
+{
     v[0] = 0.0;
     v[1] = 0.0;
     v[2] = 0.0;
@@ -813,7 +880,8 @@ inline void MathExtra::zero4(double v[4]) {
 /* | Zero a 4x4 array |  */
 /* +------------------+  */
 
-inline void MathExtra::zero4(double m[4][4]) {
+inline void MathExtra::zero4(double m[4][4])
+{
     m[0][0] = 0.0; m[0][1] = 0.0; m[0][2] = 0.0; m[0][3] = 0.0;
     m[1][0] = 0.0; m[1][1] = 0.0; m[1][2] = 0.0; m[1][3] = 0.0;
     m[2][0] = 0.0; m[2][1] = 0.0; m[2][2] = 0.0; m[2][3] = 0.0;

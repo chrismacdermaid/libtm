@@ -30,7 +30,8 @@ using namespace MathExtra;
  * @return list of complex conjugates
  */
 static int tcl_complex_conj(ClientData /*clientdata*/, Tcl_Interp *interp,
-                            int objc, Tcl_Obj * const objv[]) {
+                            int objc, Tcl_Obj * const objv[])
+{
 
     std::vector<std::complex<double> > v;
 
@@ -71,12 +72,13 @@ static int tcl_complex_conj(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 static int tcl_complex_veclength2(ClientData /*clientdata*/, Tcl_Interp *interp,
-                                  int objc, Tcl_Obj * const objv[]) {
+                                  int objc, Tcl_Obj * const objv[])
+{
 
     std::vector<std::complex<double> > v;
 
     if ( objc != 2 ) {
-        Tcl_WrongNumArgs(interp, objc, objv, "veclength_2_complex expects a list of complex numbers");
+        Tcl_WrongNumArgs(interp, objc, objv, "complex_veclength2 expects a list of complex numbers");
         return TCL_ERROR;
     }
     Tcl_Obj* list = objv[1];
@@ -100,8 +102,8 @@ static int tcl_complex_veclength2(ClientData /*clientdata*/, Tcl_Interp *interp,
 
     // Construct a list of complex objects from the vector
     list = Tcl_NewListObj(0, NULL);
-    if (tcl_put_real_list(NULL, interp, list, v) != TCL_OK ) {
-        Tcl_AppendResult(interp, "Couldn't construct real list");
+    if (tcl_put_complex_list(NULL, interp, list, v) != TCL_OK ) {
+        Tcl_AppendResult(interp, "Couldn't construct complex list");
         return TCL_ERROR;
     }
 
@@ -111,8 +113,63 @@ static int tcl_complex_veclength2(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
+static int tcl_complex_vecadd(ClientData /*clientdata*/, Tcl_Interp *interp,
+                              int objc, Tcl_Obj * const objv[])
+{
+
+    std::vector<std::complex<double> > v1;
+    std::vector<std::complex<double> > v2;
+
+    if ( objc != 3 ) {
+        Tcl_WrongNumArgs(interp, objc, objv, "complex_vecadd expects two vectors of complex numbers");
+        return TCL_ERROR;
+    }
+    Tcl_Obj* list1 = objv[1];
+    Tcl_Obj* list2 = objv[2];
+
+    int count1 = 0;
+    int count2 = 0;
+    if ( Tcl_ListObjLength(interp, list1, &count1) ||
+         Tcl_ListObjLength(interp, list1, &count2) != TCL_OK ) {
+        Tcl_AppendResult(interp, "Couldn't get complex vector length");
+        return TCL_ERROR;
+    }
+
+    if (count1 != count2) {
+        Tcl_AppendResult(interp, "complex vectors must be the same size");
+        return TCL_ERROR;
+    }
+
+    if (tcl_get_complex_vector(NULL, interp, list1, v1) ||
+        tcl_get_complex_vector(NULL, interp, list2, v2) != TCL_OK ) {
+        Tcl_AppendResult(interp, "Couldn't retrieve complex list, malformed vector?");
+        return TCL_ERROR;
+    }
+
+    // Calculate the term-by-term sum
+    std::vector<std::complex<double> >::iterator it1;
+    std::vector<std::complex<double> >::iterator it2;
+    for (it1 = v1.begin(), it2 = v2.begin(); it1 != v1.end() && it2 != v2.end();
+         ++it1, ++it2) {*it1 = *it1 + *it2;}
+
+    // Construct a list of complex objects from the vector
+    Tcl_Obj* list = NULL;
+    list = Tcl_NewListObj(0, NULL);
+    if (tcl_put_complex_list(NULL, interp, list, v1) != TCL_OK ) {
+        Tcl_AppendResult(interp, "Couldn't construct complex list");
+        return TCL_ERROR;
+    }
+
+    // Return the list to the user
+    Tcl_SetObjResult(interp, list);
+
+    return TCL_OK;
+}
+
+
 int tcl_get_complex_vector(ClientData /*clientdata*/, Tcl_Interp *interp,
-                           Tcl_Obj * const list, std::vector<std::complex<double> > &v) {
+                           Tcl_Obj * const list, std::vector<std::complex<double> > &v)
+{
 
     int count = 0;
     if ( Tcl_ListObjLength(interp, list, &count) != TCL_OK ) {
@@ -159,7 +216,8 @@ int tcl_get_complex_vector(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 int tcl_put_complex_list(ClientData /*clientdata*/, Tcl_Interp *interp,
-                         Tcl_Obj *list, std::vector<std::complex<double> > &v) {
+                         Tcl_Obj *list, std::vector<std::complex<double> > &v)
+{
 
     Tcl_Obj* Re;
     Tcl_Obj* Im;
@@ -192,7 +250,8 @@ int tcl_put_complex_list(ClientData /*clientdata*/, Tcl_Interp *interp,
 }
 
 int tcl_put_real_list(ClientData /*clientdata*/, Tcl_Interp *interp,
-                      Tcl_Obj *list, std::vector<std::complex<double> > &v) {
+                      Tcl_Obj *list, std::vector<std::complex<double> > &v)
+{
 
     Tcl_Obj* Re;
 
@@ -216,7 +275,8 @@ int tcl_put_real_list(ClientData /*clientdata*/, Tcl_Interp *interp,
 // | Add tcl commands to interpreter |
 // +---------------------------------+
 
-int complex_init(Tcl_Interp *interp) {
+int complex_init(Tcl_Interp *interp)
+{
 
     // complex_conj
     Tcl_CreateObjCommand(interp, (char *) "complex_conj", tcl_complex_conj,
@@ -225,6 +285,11 @@ int complex_init(Tcl_Interp *interp) {
     // Square Magnitude
     Tcl_CreateObjCommand(interp, (char *) "complex_veclength2", tcl_complex_veclength2,
                          (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+
+    // Term-by-term vector addition
+    Tcl_CreateObjCommand(interp, (char *) "complex_vecadd", tcl_complex_vecadd,
+                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+
 
     return TCL_OK;
 }
