@@ -41,6 +41,14 @@
 using namespace TCLMATH_NS;
 using namespace MathExtra;
 
+/**
+ * @brief calculate the next power of two for an integer
+ *
+ * 1000 returns 1024, 255 returns 256 etc...
+ *
+ * @return TCL_OK/TCL_ERROR
+ */
+
 static int tcl_nextpow2(ClientData /*clientdata*/, Tcl_Interp *interp,
                         int argc, Tcl_Obj * const objv[])
 {
@@ -60,7 +68,7 @@ static int tcl_nextpow2(ClientData /*clientdata*/, Tcl_Interp *interp,
     double d2 = 0.0;
     d2 = nextpow2(d1);
 
-    Tcl_SetObjResult(interp, Tcl_NewDoubleObj(d2));
+    Tcl_SetObjResult(interp, Tcl_NewLongObj(d2));
     return TCL_OK;
 }
 

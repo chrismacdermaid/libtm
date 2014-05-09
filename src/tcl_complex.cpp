@@ -26,7 +26,6 @@ using namespace MathExtra;
 /**
  * @brief Calculate the complex conjugate of the provided list
  *
- *
  * @return list of complex conjugates
  */
 static int tcl_complex_conj(ClientData /*clientdata*/, Tcl_Interp *interp,
@@ -71,6 +70,13 @@ static int tcl_complex_conj(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
+/**
+ * @brief calculate the square magnitude of the elements in the list
+ *
+ * Term-by-term calculation of the square magnitude of the complex elements
+ *
+ * @return TCL_OK/TCL_ERROR
+ */
 static int tcl_complex_veclength2(ClientData /*clientdata*/, Tcl_Interp *interp,
                                   int objc, Tcl_Obj * const objv[])
 {
@@ -166,7 +172,12 @@ static int tcl_complex_vecadd(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-
+/**
+ * @brief extract a vector of complex numbers from a list
+ *
+ *
+ * @return TCL_OK/TCL_ERROR
+ */
 int tcl_get_complex_vector(ClientData /*clientdata*/, Tcl_Interp *interp,
                            Tcl_Obj * const list, std::vector<std::complex<double> > &v)
 {
@@ -215,6 +226,13 @@ int tcl_get_complex_vector(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
+/**
+ * @brief return a list of complex numbers to the user
+ *
+ * {{real imag} {real imag} {real imag}}
+ *
+ * @return TCL_OK/TCL_ERROR
+ */
 int tcl_put_complex_list(ClientData /*clientdata*/, Tcl_Interp *interp,
                          Tcl_Obj *list, std::vector<std::complex<double> > &v)
 {
@@ -249,6 +267,13 @@ int tcl_put_complex_list(ClientData /*clientdata*/, Tcl_Interp *interp,
     return TCL_OK;
 }
 
+/**
+ * @brief Return only a list of real values from a complex vector
+ *
+ * {real real real real}
+ *
+ * @return TCL_OK/TCL_ERROR
+ */
 int tcl_put_real_list(ClientData /*clientdata*/, Tcl_Interp *interp,
                       Tcl_Obj *list, std::vector<std::complex<double> > &v)
 {
