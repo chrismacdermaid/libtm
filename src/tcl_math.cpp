@@ -135,44 +135,57 @@ static int tcl_vecsub(ClientData /*clientdata*/, Tcl_Interp *interp,
  *
  * @return TCL_OK/TCL_ERROR
  */
-static int tcl_vecadd(ClientData /*clientdata*/, Tcl_Interp *interp,
-                      int argc, Tcl_Obj * const objv[])
-{
-
-    // Check number of arguments
-    if (argc != 3) {
-        Tcl_AppendResult(interp, "vecadd expects two vectors of equal length", "\n", NULL);
+// Function:  vecadd v1 v2 {v3 ...}
+//  Returns: the sum of vectors; must all be the same length
+//  The increase in speed from Tcl to C++ is 4561 / 255 == 18 fold
+static int tcl_vecadd(ClientData, Tcl_Interp *interp, int argc,
+                      Tcl_Obj * const objv[]) {
+    if (argc < 3) {
+        Tcl_WrongNumArgs(interp, 1, objv, (char *)"vec1 vec2 ?vec3? ?vec4? ...");
         return TCL_ERROR;
     }
-
-    // Get the individual lists from objv[1] and objv[2]
-    int num1 = 0, num2 = 0;
-    Tcl_Obj **data1, **data2;
-    if (Tcl_ListObjGetElements(interp, objv[1], &num1, &data1) != TCL_OK)
-        return TCL_ERROR;
-    if (Tcl_ListObjGetElements(interp, objv[2], &num2, &data2) != TCL_OK)
-        return TCL_ERROR;
-
-    // Check to make sure the vectors are equal in length
-    if (num1 != num2) {
-        Tcl_AppendResult(interp, "vecadd expects two vectors of equal length", "\n", NULL);
+    int num;
+    Tcl_Obj **data;
+    if (Tcl_ListObjGetElements(interp, objv[1], &num, &data) != TCL_OK) {
         return TCL_ERROR;
     }
+    double *sum = new double[num];
+    int i;
+    for (i=0; i<num; i++) {
+        if (Tcl_GetDoubleFromObj(interp, data[i], sum+i) != TCL_OK) {
+            delete [] sum;
+            return TCL_ERROR;
+        }
+    }
+    // do the sums on the rest
+    int num2;
+    for (int term=2; term < argc; term++) {
+        if (Tcl_ListObjGetElements(interp, objv[term], &num2, &data) != TCL_OK) {
+            delete [] sum;
+            return TCL_ERROR;
+        }
+        if (num != num2) {
+            Tcl_SetResult(interp, (char *) "vecadd: two vectors don't have the same size", TCL_STATIC);
+            delete [] sum;
+            return TCL_ERROR;
+        }
+        for (i=0; i<num; i++) {
+            double df;
+            if (Tcl_GetDoubleFromObj(interp, data[i], &df) != TCL_OK) {
+                delete [] sum;
+                return TCL_ERROR;
+            }
+            sum[i] += df;
+        }
+    }
 
+    // and return the result
     Tcl_Obj *tcl_result = Tcl_NewListObj(0, NULL);
-    for (int i = 0; i < num1; i++) {
-        double d1 = 0, d2 = 0;
-        if (Tcl_GetDoubleFromObj(interp, data1[i], &d1) != TCL_OK) {
-            Tcl_SetResult(interp, (char *) "vecadd: non-numeric in first argument", TCL_STATIC );
-            return TCL_ERROR;
-        }
-        if (Tcl_GetDoubleFromObj(interp, data2[i], &d2) != TCL_OK) {
-            Tcl_SetResult(interp, (char *) "vecadd: non-numeric in second argument", TCL_STATIC );
-            return TCL_ERROR;
-        }
-        Tcl_ListObjAppendElement(interp, tcl_result, Tcl_NewDoubleObj(d1 + d2));
+    for (i=0; i<num; i++) {
+        Tcl_ListObjAppendElement(interp, tcl_result, Tcl_NewDoubleObj(sum[i]));
     }
     Tcl_SetObjResult(interp, tcl_result);
+    delete [] sum;
     return TCL_OK;
 }
 
