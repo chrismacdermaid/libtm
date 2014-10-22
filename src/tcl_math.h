@@ -1,4 +1,4 @@
-/**
+ /**
  * @file   tcl_math.h
  * @author macdercm <macdercm@mtdoom>
  * @date   Fri Jan 24 11:18:17 2014
@@ -16,6 +16,7 @@
 /* +---------------------------------+  */
 
 int matvec_init(Tcl_Interp *interp);
+int matvec_destroy(Tcl_Interp *interp);
 
 /* +---------+   */
 /* | HELPERS |   */
@@ -24,6 +25,8 @@ int matvec_init(Tcl_Interp *interp);
 int tcl_get_vector(const char *s, double *val, Tcl_Interp *interp); /**< Get vector from TCL String */
 
 int tcl_get_vector_obj(Tcl_Obj *s, double *val, Tcl_Interp *interp); /**< Get vector from TCL Obj */
+
+int tcl_get_array_obj(Tcl_Obj *s, Tcl_Interp *interp, double **a);
 
 int tcl_get_matrix(const char *fctn, Tcl_Interp *interp, Tcl_Obj *s, double mat[4][4]);
 

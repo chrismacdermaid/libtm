@@ -7,6 +7,7 @@
 #include "main.h"
 #include "tcl_math.h"
 #include "tcl_complex.h"
+#include "tcl_align.h"
 
 using namespace TCLMATH_NS;
 
@@ -20,6 +21,9 @@ int tcl_tm(ClientData UNUSED(clientdata), Tcl_Interp *interp,
 
     // Load complex commands
     complex_init(interp);
+
+    // Load Alignment Commands
+    align_init(interp);
 
     return TCL_OK;
 }

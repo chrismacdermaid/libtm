@@ -16,6 +16,7 @@
 #include <complex>
 
 int complex_init(Tcl_Interp *interp);
+int complex_destroy(Tcl_Interp *interp);
 
 // +---------+
 // | HELPERS |

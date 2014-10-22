@@ -1165,6 +1165,47 @@ int tcl_get_vector_obj(Tcl_Obj *s, double *val, Tcl_Interp *interp)
 }
 
 /**
+ * @brief Convert an array of arbitrary length in TCL_Obj to double[][]
+ *
+ * @param s tcl object containg a list
+ * @param val the double vector to return into
+ * @param interp the tcl interpreter
+ *
+ * @return TCL_OK/TCL_ERROR
+ */
+int tcl_get_array_obj(Tcl_Obj *s, Tcl_Interp *interp, double **a)
+{
+
+    int num = 0;
+    Tcl_Obj **pos = NULL;
+    if (Tcl_ListObjGetElements(interp, s, &num, &pos) != TCL_OK) {
+        Tcl_SetResult(interp, (char *) "Badly formed array or dimension mismatch", TCL_STATIC );
+        return TCL_ERROR;
+    }
+
+    // Loop over list of list, return double into a
+    int num2 = 0;
+    Tcl_Obj **pos2 = NULL;
+    for (int i = 0; i < num; i++) {
+
+        if (Tcl_ListObjGetElements(interp, pos[i], &num2, &pos2) != TCL_OK) {
+            Tcl_SetResult(interp, (char *) "Badly formed array or dimension mismatch", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        double *b = a[i];
+        for (int j = 0; j < num2; j++)
+            if (Tcl_GetDoubleFromObj(interp, pos2[j], b + j) != TCL_OK) {
+                Tcl_SetResult(interp, (char *) "Non-Numeric in array", TCL_STATIC );
+                return TCL_ERROR;
+            }
+    }
+
+    return TCL_OK;
+}
+
+
+/**
  * @brief parse a tcl object containg a 4x4 matrix to a double [4][4] array
  *
  * @param fctn a string describing what function this is being called from, used in error
@@ -1217,96 +1258,169 @@ int tcl_get_matrix(const char *fctn, Tcl_Interp *interp, Tcl_Obj *s, double mat[
     return TCL_OK;
 }
 
+
+/**
+ * @brief Load commands into the interpretor
+ *
+ * @param interp tcl interpreter
+ * @return TCL_OK/TCL_ERROR
+ */
+
 int matvec_init(Tcl_Interp *interp)
 {
 
+    /** Each command is checked against commands currently loaded into the interpretor.
+     * By default, existing commands are NOT overwritten to preserve VMDs commands
+     * when necessary
+     */
+
+    Tcl_CmdInfo cmdinfo;
+
     // Next power of two
-    Tcl_CreateObjCommand(interp, (char *) "nextpow2", tcl_nextpow2,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "nextpow2", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "nextpow2", tcl_nextpow2,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Transaxis command
-    Tcl_CreateObjCommand(interp, (char *) "transaxis", tcl_transaxis,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "transaxis", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "transaxis", tcl_transaxis,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Transabout command
-    Tcl_CreateObjCommand(interp, (char *) "transabout", tcl_transabout,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "transabout", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "transabout", tcl_transabout,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecsub command
-    Tcl_CreateObjCommand(interp, (char *) "vecsub", tcl_vecsub,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecsub", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecsub", tcl_vecsub,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecadd command
-    Tcl_CreateObjCommand(interp, (char *) "vecadd", tcl_vecadd,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecadd", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecadd", tcl_vecadd,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecmul command
-    Tcl_CreateObjCommand(interp, (char *) "vecmul", tcl_vecmul,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecmul", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecmul", tcl_vecmul,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecsum command
-    Tcl_CreateObjCommand(interp, (char *) "vecsum", tcl_vecsum,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecsum", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecsum", tcl_vecsum,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecdot command
-    Tcl_CreateObjCommand(interp, (char *) "vecdot", tcl_vecdot,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecdot", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecdot", tcl_vecdot,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Veccross command
-    Tcl_CreateObjCommand(interp, (char *) "veccross", tcl_veccross,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "veccross", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "veccross", tcl_veccross,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecinvert command
-    Tcl_CreateObjCommand(interp, (char *) "vecinvert", tcl_vecinvert,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecinvert", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecinvert", tcl_vecinvert,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecnorm command
-    Tcl_CreateObjCommand(interp, (char *) "vecnorm", tcl_vecnorm,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecnorm", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecnorm", tcl_vecnorm,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecscale command
-    Tcl_CreateObjCommand(interp, (char *) "vecscale", tcl_vecscale,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecscale", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecscale", tcl_vecscale,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Veclength command
-    Tcl_CreateObjCommand(interp, (char *) "veclength", tcl_veclength,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "veclength", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "veclength", tcl_veclength,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Veclength2 command
-    Tcl_CreateObjCommand(interp, (char *) "veclength2", tcl_veclength2,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "veclength2", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "veclength2", tcl_veclength2,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecdist command
-    Tcl_CreateObjCommand(interp, (char *) "vecdist", tcl_vecdist,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecdist", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "vecdist", tcl_vecdist,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Matmult command
-    Tcl_CreateObjCommand(interp, (char *) "matmult", tcl_matmult,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "matmult", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "matmult", tcl_matmult,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Matvec command
-    Tcl_CreateObjCommand(interp, (char *) "matvec", tcl_matvec,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "matvec", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "matvec", tcl_matvec,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Transvec command
-    Tcl_CreateObjCommand(interp, (char *) "transvec", tcl_transvec,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "transvec", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "transvec", tcl_transvec,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Transvecinv command
-    Tcl_CreateObjCommand(interp, (char *) "transvecinv", tcl_transvecinv,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "transvecinv", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "transvecinv", tcl_transvecinv,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Transtranspose command
-    Tcl_CreateObjCommand(interp, (char *) "transtranspose", tcl_transtranspose,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "transtranspose", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "transtranspose", tcl_transtranspose,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Vecmean
-    Tcl_CreateObjCommand(interp, "vecmean", obj_vecmean,
-                         (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecmean", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, "vecmean", obj_vecmean,
+                             (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
     ///Vecstdev
-    Tcl_CreateObjCommand(interp, "vecstddev", obj_vecstddev,
-                         (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "vecstdev", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, "vecstddev", obj_vecstddev,
+                             (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+
+    return TCL_OK;
+}
+
+
+/**
+ * @brief Delete commands from the interpretor
+ *
+ * @param interp tcl interpreter
+ * @return TCL_OK/TCL_ERROR
+ */
+int matvec_destroy(Tcl_Interp *interp)
+{
+    Tcl_DeleteCommand(interp, (char *) "nextpow2");
+    Tcl_DeleteCommand(interp, (char *) "transaxis");
+    Tcl_DeleteCommand(interp, (char *) "transabout");
+    Tcl_DeleteCommand(interp, (char *) "vecsub");
+    Tcl_DeleteCommand(interp, (char *) "vecadd");
+    Tcl_DeleteCommand(interp, (char *) "vecmul");
+    Tcl_DeleteCommand(interp, (char *) "vecsum");
+    Tcl_DeleteCommand(interp, (char *) "vecdot");
+    Tcl_DeleteCommand(interp, (char *) "veccross");
+    Tcl_DeleteCommand(interp, (char *) "nextpow2");
+    Tcl_DeleteCommand(interp, (char *) "vecinvert");
+    Tcl_DeleteCommand(interp, (char *) "vecnorm");
+    Tcl_DeleteCommand(interp, (char *) "vecscale");
+    Tcl_DeleteCommand(interp, (char *) "veclength");
+    Tcl_DeleteCommand(interp, (char *) "veclength2");
+    Tcl_DeleteCommand(interp, (char *) "vecdist");
+    Tcl_DeleteCommand(interp, (char *) "matmult");
+    Tcl_DeleteCommand(interp, (char *) "matvec");
+    Tcl_DeleteCommand(interp, (char *) "transvec");
+    Tcl_DeleteCommand(interp, (char *) "transvecinv");
+    Tcl_DeleteCommand(interp, (char *) "transtranspose");
+    Tcl_DeleteCommand(interp, (char *) "vecmean");
+    Tcl_DeleteCommand(interp, (char *) "vecstdev");
 
     return TCL_OK;
 }

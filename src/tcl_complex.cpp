@@ -303,18 +303,38 @@ int tcl_put_real_list(ClientData /*clientdata*/, Tcl_Interp *interp,
 int complex_init(Tcl_Interp *interp)
 {
 
+    /** Each command is checked against commands currently loaded into the interpretor.
+     * By default, existing commands are NOT overwritten to preserve VMDs commands
+     * when necessary
+     */
+
+    Tcl_CmdInfo cmdinfo;
+
     // complex_conj
-    Tcl_CreateObjCommand(interp, (char *) "complex_conj", tcl_complex_conj,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "complex_conj", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "complex_conj", tcl_complex_conj,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Square Magnitude
-    Tcl_CreateObjCommand(interp, (char *) "complex_veclength2", tcl_complex_veclength2,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "complex_veclength2", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "complex_veclength2", tcl_complex_veclength2,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
     // Term-by-term vector addition
-    Tcl_CreateObjCommand(interp, (char *) "complex_vecadd", tcl_complex_vecadd,
-                         (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
+    if (Tcl_GetCommandInfo(interp, (char *) "complex_vecadd", &cmdinfo) == 0)
+        Tcl_CreateObjCommand(interp, (char *) "complex_vecadd", tcl_complex_vecadd,
+                             (ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
 
     return TCL_OK;
+}
+
+int complex_destroy(Tcl_Interp *interp)
+{
+    Tcl_DeleteCommand(interp, (char *) "complex_conj");
+    Tcl_DeleteCommand(interp, (char *) "complex_veclength2");
+    Tcl_DeleteCommand(interp, (char *) "complex_vecadd");
+
+    return TCL_OK;
+
 }

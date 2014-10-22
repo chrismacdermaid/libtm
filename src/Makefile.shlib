@@ -7,9 +7,9 @@ SHELL = /bin/sh
 ROOT =  tm
 EXE =	lib$(ROOT)_$@.so
 
-SRC =	main.cpp math_extra.cpp tcl_complex.cpp tcl_math.cpp 
+SRC =	main.cpp math_extra.cpp tcl_align.cpp tcl_complex.cpp tcl_math.cpp 
 
-INC =	constants.h main.h math_extra.h tcl_complex.h tcl_math.h 
+INC =	constants.h main.h math_extra.h tcl_align.h tcl_complex.h tcl_math.h 
 
 OBJ =	$(SRC:.cpp=.o)
 
