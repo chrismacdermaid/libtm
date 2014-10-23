@@ -29,6 +29,7 @@ clean:
 	@if [ ! -d Obj_shlib_$@ ]; then mkdir Obj_shlib_$@; fi
 	@cp -p $(SRC) $(INC) Obj_shlib_$@
 	@cp MAKE/Makefile.$@ Obj_shlib_$@/Makefile
+	@cp MAKE/Makefile.base Obj_shlib_$@/Makefile.base
 	@cd Obj_shlib_$@; \
 	$(MAKE) $(MFLAGS) "OBJ = $(OBJ)" \
           "INC = $(INC)" "EXE = ../$(EXE)" shlib

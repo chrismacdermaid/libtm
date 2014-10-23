@@ -342,4 +342,5 @@ int align_init(Tcl_Interp *interp)
 
 int align_destroy(Tcl_Interp *interp) {
     Tcl_DeleteCommand(interp, (char *) "align");
+    return TCL_OK;
 }
